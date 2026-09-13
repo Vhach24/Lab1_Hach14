@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:StudentCabinet.ViewModels"
+             x:Class="StudentCabinet.Views.MainPage"
+             Title="Особистий кабінет студента">
+
+    <ContentPage.BindingContext>
+        <vm:StudentViewModel />
+    </ContentPage.BindingContext>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="14">
+
+            <Label Text="Особистий кабінет студента"
+                   FontSize="22"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center" />
+
+            <Label Text="ПІБ" FontAttributes="Bold" />
+            <Entry Text="{Binding FullName, Mode=TwoWay}"
+                   Placeholder="Введіть ПІБ студента" />
+
+            <Label Text="Група" FontAttributes="Bold" />
+            <Entry Text="{Binding Group, Mode=TwoWay}"
+                   Placeholder="Введіть групу" />
+
+            <Label Text="{Binding AverageScore, StringFormat='Середній бал: {0:F2}'}" />
+            <Slider Minimum="0"
+                    Maximum="5"
+                    Value="{Binding AverageScore, Mode=TwoWay}" />
+
+            <Frame Padding="12" BorderColor="LightGray">
+                <Label Text="{Binding Greeting, Mode=OneWay}"
+                       FontAttributes="Bold"
+                       TextColor="{Binding AverageScoreColor}" />
+            </Frame>
+
+            <Button Text="Додати студента"
+                    Command="{Binding AddStudentCommand}"
+                    HorizontalOptions="Fill"
+                    Margin="0,10,0,0" />
+
+            <Label Text="Список студентів"
+                   FontAttributes="Bold"
+                   FontSize="18"
+                   Margin="0,10,0,0" />
+
+            <CollectionView ItemsSource="{Binding Students}"
+                             EmptyView="Список поки порожній — додайте першого студента.">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Padding="12"
+                                Margin="0,4"
+                                Stroke="LightGray"
+                                StrokeShape="RoundRectangle 10">
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="{Binding FullName}" FontAttributes="Bold" />
+                                <Label Text="{Binding Group, StringFormat='Група: {0}'}" />
+                                <Label Text="{Binding AverageScore, StringFormat='Середній бал: {0:F2}'}" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
