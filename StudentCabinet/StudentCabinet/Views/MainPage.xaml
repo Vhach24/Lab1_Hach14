@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:StudentCabinet.ViewModels"
              x:Class="StudentCabinet.Views.MainPage"
+             x:Name="RootPage"
              Title="Особистий кабінет студента">
 
     <ContentPage.BindingContext>
@@ -58,6 +59,11 @@
                                 <Label Text="{Binding FullName}" FontAttributes="Bold" />
                                 <Label Text="{Binding Group, StringFormat='Група: {0}'}" />
                                 <Label Text="{Binding AverageScore, StringFormat='Середній бал: {0:F2}'}" />
+
+                                <Button Text="Детальніше"
+        Clicked="OnDetailsClicked"
+        HorizontalOptions="Start"
+        Margin="0,6,0,0" />
                             </VerticalStackLayout>
                         </Border>
                     </DataTemplate>

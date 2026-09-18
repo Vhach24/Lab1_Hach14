@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.Maui.Controls;
 using Microsoft.Maui.Graphics;
@@ -8,7 +9,7 @@ using StudentCabinet.Models;
 
 namespace StudentCabinet.ViewModels
 {
-    public class StudentViewModel : INotifyPropertyChanged
+    public class StudentViewModel : INotifyPropertyChanged, IQueryAttributable
     {
         private readonly Student _student = new();
 
@@ -63,9 +64,12 @@ namespace StudentCabinet.ViewModels
 
         public ICommand AddStudentCommand { get; }
 
+        public ICommand OpenDetailsCommand { get; }
+
         public StudentViewModel()
         {
             AddStudentCommand = new Command(AddStudent, CanAddStudent);
+            OpenDetailsCommand = new Command<Student>(async (student) => await OpenDetailsAsync(student));
         }
 
         private void AddStudent()
@@ -83,6 +87,30 @@ namespace StudentCabinet.ViewModels
         }
 
         private bool CanAddStudent() => !string.IsNullOrWhiteSpace(FullName);
+
+        private async Task OpenDetailsAsync(Student? student)
+        {
+            if (student is null) return;
+
+            var parameters = new Dictionary<string, object>
+            {
+                { "SelectedStudent", student }
+            };
+
+            await Shell.Current.GoToAsync("studentdetail", parameters);
+        }
+
+        public void ApplyQueryAttributes(IDictionary<string, object> query)
+        {
+            if (query.TryGetValue("UpdatedStudent", out var value) && value is Student updated)
+            {
+                int index = Students.IndexOf(updated);
+                if (index >= 0)
+                {
+                    Students[index] = updated;
+                }
+            }
+        }
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
