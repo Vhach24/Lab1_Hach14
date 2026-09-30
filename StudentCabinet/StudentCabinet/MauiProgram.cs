@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using StudentCabinet.Services;
 
 namespace StudentCabinet
 {
@@ -15,8 +16,10 @@ namespace StudentCabinet
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
 
+            builder.Services.AddSingleton<IAppStateService, AppStateService>();
+
 #if DEBUG
-    		builder.Logging.AddDebug();
+            builder.Logging.AddDebug();
 #endif
 
             return builder.Build();

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:StudentCabinet.ViewModels"
+             x:Class="StudentCabinet.Views.SettingsPage"
+             Title="Налаштування">
+
+    <ContentPage.BindingContext>
+        <vm:SettingsViewModel />
+    </ContentPage.BindingContext>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="18">
+
+            <Label Text="Налаштування"
+                   FontSize="22"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center" />
+
+            <Frame Padding="14" BorderColor="LightGray">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Тема оформлення" FontAttributes="Bold" />
+                    <HorizontalStackLayout Spacing="12">
+                        <Label Text="Світла" VerticalOptions="Center" />
+                        <Switch IsToggled="{Binding IsDarkTheme, Mode=TwoWay}" />
+                        <Label Text="Темна" VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Frame>
+
+            <Frame Padding="14" BorderColor="LightGray">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Перехід за посиланням (deep link)" FontAttributes="Bold" />
+                    <Entry Placeholder="Id студента, наприклад: 1"
+                           Keyboard="Numeric"
+                           Text="{Binding DeepLinkStudentIdText, Mode=TwoWay}" />
+                    <Button Text="Відкрити за посиланням"
+                            Command="{Binding OpenDeepLinkCommand}" />
+                    <Button Text="Назад"
+        Clicked="OnBackClicked"
+        Margin="0,10,0,0" />
+                </VerticalStackLayout>
+            </Frame>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

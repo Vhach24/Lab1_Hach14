@@ -1,5 +1,4 @@
-﻿using StudentCabinet.Models;
-using StudentCabinet.ViewModels;
+﻿using StudentCabinet.ViewModels;
 
 namespace StudentCabinet.Views
 {
@@ -10,14 +9,30 @@ namespace StudentCabinet.Views
             InitializeComponent();
         }
 
-        private void OnDetailsClicked(object sender, EventArgs e)
+        protected override void OnAppearing()
         {
-            if (sender is Button button &&
-                button.BindingContext is Student student &&
-                BindingContext is StudentViewModel vm)
+            base.OnAppearing();
+
+            if (BindingContext is StudentViewModel vm)
             {
-                vm.OpenDetailsCommand.Execute(student);
+                vm.RestoreDraftState();
+                vm.LoadCommand.Execute(null);
             }
+        }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+
+            if (BindingContext is StudentViewModel vm)
+            {
+                vm.SaveDraftState();
+            }
+        }
+
+        private async void OnSettingsClicked(object sender, EventArgs e)
+        {
+            await Shell.Current.GoToAsync("settings");
         }
     }
 }

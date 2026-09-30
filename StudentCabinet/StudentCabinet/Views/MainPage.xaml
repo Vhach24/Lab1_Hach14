@@ -18,6 +18,10 @@
                    FontAttributes="Bold"
                    HorizontalOptions="Center" />
 
+            <Button Text="Налаштування"
+                    Clicked="OnSettingsClicked"
+                    HorizontalOptions="End" />
+
             <Label Text="ПІБ" FontAttributes="Bold" />
             <Entry Text="{Binding FullName, Mode=TwoWay}"
                    Placeholder="Введіть ПІБ студента" />
@@ -61,9 +65,10 @@
                                 <Label Text="{Binding AverageScore, StringFormat='Середній бал: {0:F2}'}" />
 
                                 <Button Text="Детальніше"
-        Clicked="OnDetailsClicked"
-        HorizontalOptions="Start"
-        Margin="0,6,0,0" />
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.OpenDetailsCommand}"
+                                        CommandParameter="{Binding .}"
+                                        HorizontalOptions="Start"
+                                        Margin="0,6,0,0" />
                             </VerticalStackLayout>
                         </Border>
                     </DataTemplate>
