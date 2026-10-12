@@ -10,8 +10,33 @@ namespace StudentCabinet.ViewModels
     {
         private Student? _student;
 
-        public string FullName => _student?.FullName ?? string.Empty;
-        public string Group => _student?.Group ?? string.Empty;
+        public string FullName
+        {
+            get => _student?.FullName ?? string.Empty;
+            set
+            {
+                if (_student is null) return;
+                if (_student.FullName != value)
+                {
+                    _student.FullName = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public string Group
+        {
+            get => _student?.Group ?? string.Empty;
+            set
+            {
+                if (_student is null) return;
+                if (_student.Group != value)
+                {
+                    _student.Group = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         public double AverageScore
         {

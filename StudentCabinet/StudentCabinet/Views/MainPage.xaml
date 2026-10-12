@@ -69,6 +69,14 @@
                                         CommandParameter="{Binding .}"
                                         HorizontalOptions="Start"
                                         Margin="0,6,0,0" />
+
+                                <Button Text="Видалити"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteStudentCommand}"
+                                        CommandParameter="{Binding .}"
+                                        HorizontalOptions="Start"
+                                        BackgroundColor="IndianRed"
+                                        TextColor="White"
+                                        Margin="0,4,0,0" />
                             </VerticalStackLayout>
                         </Border>
                     </DataTemplate>

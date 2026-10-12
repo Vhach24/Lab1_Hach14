@@ -18,10 +18,10 @@
                    HorizontalOptions="Center" />
 
             <Label Text="ПІБ" FontAttributes="Bold" />
-            <Label Text="{Binding FullName}" />
+            <Entry Text="{Binding FullName, Mode=TwoWay}" />
 
             <Label Text="Група" FontAttributes="Bold" />
-            <Label Text="{Binding Group}" />
+            <Entry Text="{Binding Group, Mode=TwoWay}" />
 
             <Label Text="Середній бал" FontAttributes="Bold" />
             <Label Text="{Binding AverageScore, StringFormat='Поточне значення: {0:F2}'}" />

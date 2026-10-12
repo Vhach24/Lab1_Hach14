@@ -16,7 +16,10 @@ namespace StudentCabinet.ViewModels
             IPlatformApplication.Current?.Services.GetService<IAppStateService>()
             ?? new AppStateService();
 
-        private int _nextStudentId = 1;
+        private readonly IStudentRepository _repository =
+            IPlatformApplication.Current?.Services.GetService<IStudentRepository>()
+            ?? new StudentRepository(Path.Combine(FileSystem.AppDataDirectory, "students.db3"),
+                new SyncService(Path.Combine(FileSystem.AppDataDirectory, "students.db3")));
 
         private readonly Student _student = new();
 
@@ -71,24 +74,45 @@ namespace StudentCabinet.ViewModels
 
         public ICommand AddStudentCommand { get; }
         public ICommand OpenDetailsCommand { get; }
+        public ICommand DeleteStudentCommand { get; }
         public ICommand LoadCommand { get; }
 
         public StudentViewModel()
         {
-            AddStudentCommand = new Command(AddStudent, CanAddStudent);
+            AddStudentCommand = new Command(async () => await AddStudentAsync(), CanAddStudent);
             OpenDetailsCommand = new Command<Student>(async (student) => await OpenDetailsAsync(student));
-            LoadCommand = new Command(Load);
+            DeleteStudentCommand = new Command<Student>(async (student) => await DeleteStudentAsync(student));
+            LoadCommand = new Command(async () => await LoadAsync());
         }
 
-        private void AddStudent()
+        private async Task LoadAsync()
         {
-            Students.Add(new Student
+            System.Diagnostics.Debug.WriteLine("[Lifecycle] StudentViewModel.LoadAsync()");
+
+            Students.Clear();
+            foreach (var s in await _repository.GetAllAsync())
+                Students.Add(s);
+
+            if (_appState.PendingDeepLinkStudentId is int pendingId)
             {
-                Id = _nextStudentId++,
+                _appState.PendingDeepLinkStudentId = null;
+                var target = Students.FirstOrDefault(s => s.Id == pendingId);
+                if (target is not null)
+                    _ = OpenDeepLinkedStudentAsync(target);
+            }
+        }
+
+        private async Task AddStudentAsync()
+        {
+            var newStudent = new Student
+            {
                 FullName = FullName,
                 Group = Group,
                 AverageScore = AverageScore
-            });
+            };
+
+            await _repository.SaveAsync(newStudent);
+            Students.Add(newStudent);
 
             FullName = string.Empty;
             Group = string.Empty;
@@ -97,30 +121,17 @@ namespace StudentCabinet.ViewModels
             _appState.ClearDraft();
         }
 
-        private void Load()
+        private async Task DeleteStudentAsync(Student? student)
         {
-            if (_appState.PendingDeepLinkStudentId is int pendingId)
-            {
-                _appState.PendingDeepLinkStudentId = null;
-                var target = Students.FirstOrDefault(s => s.Id == pendingId);
-                if (target is not null)
-                {
-                    _ = OpenDeepLinkedStudentAsync(target);
-                }
-            }
-        }
-
-        private async Task OpenDeepLinkedStudentAsync(Student target)
-        {
-            await Task.Delay(500);
-            await OpenDetailsAsync(target);
+            if (student is null) return;
+            await _repository.DeleteAsync(student);
+            Students.Remove(student);
         }
 
         public void SaveDraftState()
         {
             if (string.IsNullOrWhiteSpace(FullName) && string.IsNullOrWhiteSpace(Group) && AverageScore == 0)
                 return;
-
             _appState.SaveDraft(FullName, Group, AverageScore);
         }
 
@@ -128,7 +139,6 @@ namespace StudentCabinet.ViewModels
         {
             var draft = _appState.LoadDraft();
             if (draft is null) return;
-
             FullName = draft.Value.FullName;
             Group = draft.Value.Group;
             AverageScore = draft.Value.AverageScore;
@@ -140,34 +150,28 @@ namespace StudentCabinet.ViewModels
         {
             if (student is null) return;
 
-            var parameters = new Dictionary<string, object>
-            {
-                { "SelectedStudent", student }
-            };
-
+            var parameters = new Dictionary<string, object> { { "SelectedStudent", student } };
             for (int attempt = 0; attempt < 6; attempt++)
             {
-                try
-                {
-                    await Shell.Current.GoToAsync("studentdetail", parameters);
-                    return;
-                }
-                catch (InvalidOperationException)
-                {
-                    await Task.Delay(250);
-                }
+                try { await Shell.Current.GoToAsync("studentdetail", parameters); return; }
+                catch (InvalidOperationException) { await Task.Delay(250); }
             }
         }
 
-        public void ApplyQueryAttributes(IDictionary<string, object> query)
+        private async Task OpenDeepLinkedStudentAsync(Student target)
+        {
+            await Task.Delay(500);
+            await OpenDetailsAsync(target);
+        }
+
+        public async void ApplyQueryAttributes(IDictionary<string, object> query)
         {
             if (query.TryGetValue("UpdatedStudent", out var value) && value is Student updated)
             {
+                await _repository.SaveAsync(updated);
                 int index = Students.IndexOf(updated);
                 if (index >= 0)
-                {
                     Students[index] = updated;
-                }
             }
         }
 

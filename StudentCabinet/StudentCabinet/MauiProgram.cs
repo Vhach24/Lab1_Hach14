@@ -18,6 +18,12 @@ namespace StudentCabinet
 
             builder.Services.AddSingleton<IAppStateService, AppStateService>();
 
+            builder.Services.AddSingleton<ISyncService>(s =>
+                new SyncService(Path.Combine(FileSystem.AppDataDirectory, "students.db3")));
+
+            builder.Services.AddSingleton<IStudentRepository>(s =>
+                new StudentRepository(Path.Combine(FileSystem.AppDataDirectory, "students.db3"), s.GetRequiredService<ISyncService>()));
+
 #if DEBUG
             builder.Logging.AddDebug();
 #endif

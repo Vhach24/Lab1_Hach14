@@ -1,7 +1,10 @@
-﻿namespace StudentCabinet.Models
+﻿using SQLite;
+
+namespace StudentCabinet.Models
 {
     public class Student
     {
+        [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
         public string FullName { get; set; } = string.Empty;
