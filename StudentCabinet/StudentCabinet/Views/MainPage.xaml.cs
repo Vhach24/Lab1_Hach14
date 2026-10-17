@@ -34,5 +34,18 @@ namespace StudentCabinet.Views
         {
             await Shell.Current.GoToAsync("settings");
         }
+
+        private void OnSimulateCrashClicked(object sender, EventArgs e)
+        {
+            Task.Run(() => throw new InvalidOperationException("Тестовий необроблений виняток у фоновій задачі"));
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+        }
+
+        private async void OnViewLogsClicked(object sender, EventArgs e)
+        {
+            await Shell.Current.GoToAsync("logviewer");
+        }
     }
 }

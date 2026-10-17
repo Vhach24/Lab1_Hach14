@@ -9,6 +9,7 @@ namespace StudentCabinet
             InitializeComponent();
             Routing.RegisterRoute("studentdetail", typeof(StudentDetailPage));
             Routing.RegisterRoute("settings", typeof(Views.SettingsPage));
+            Routing.RegisterRoute("logviewer", typeof(LogViewerPage));
         }
     }
 }

@@ -17,9 +17,11 @@ namespace StudentCabinet.ViewModels
             ?? new AppStateService();
 
         private readonly IStudentRepository _repository =
-            IPlatformApplication.Current?.Services.GetService<IStudentRepository>()
-            ?? new StudentRepository(Path.Combine(FileSystem.AppDataDirectory, "students.db3"),
-                new SyncService(Path.Combine(FileSystem.AppDataDirectory, "students.db3")));
+      IPlatformApplication.Current?.Services.GetService<IStudentRepository>()
+      ?? new StudentRepository(Path.Combine(FileSystem.AppDataDirectory, "students.db3"),
+          new SyncService(Path.Combine(FileSystem.AppDataDirectory, "students.db3"),
+              Microsoft.Extensions.Logging.Abstractions.NullLogger<SyncService>.Instance),
+          Microsoft.Extensions.Logging.Abstractions.NullLogger<StudentRepository>.Instance);
 
         private readonly Student _student = new();
 

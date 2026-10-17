@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="StudentCabinet.Views.LogViewerPage"
+             Title="Перегляд логів">
+
+    <Grid RowDefinitions="Auto,*" Padding="16" RowSpacing="10">
+
+        <Picker x:Name="LevelPicker"
+                Grid.Row="0"
+                Title="Рівень логування"
+                SelectedIndexChanged="OnLevelChanged">
+            <Picker.ItemsSource>
+                <x:Array Type="{x:Type x:String}">
+                    <x:String>Усі</x:String>
+                    <x:String>INF</x:String>
+                    <x:String>WRN</x:String>
+                    <x:String>ERR</x:String>
+                    <x:String>FTL</x:String>
+                </x:Array>
+            </Picker.ItemsSource>
+        </Picker>
+
+        <CollectionView x:Name="LogsView" Grid.Row="1">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Label Text="{Binding .}"
+                           FontSize="12"
+                           Margin="0,2"
+                           LineBreakMode="WordWrap" />
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </Grid>
+
+</ContentPage>
